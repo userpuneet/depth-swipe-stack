@@ -47,7 +47,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/health/800/500",
     isLive: false,
     headline: "World Health Organization declares new pandemic preparedness framework",
     timeAgo: "1D AGO",
