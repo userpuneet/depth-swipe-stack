@@ -3,7 +3,7 @@ import type { NewsCardData } from "../components/NewsCard";
 export const newsCards: NewsCardData[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/climate/800/500",
     isLive: true,
     headline: "Senate passes landmark climate bill with bipartisan support in late-night session",
     timeAgo: "5H AGO",
