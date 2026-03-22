@@ -3,7 +3,7 @@ import type { NewsCardData } from "../components/NewsCard";
 export const newsCards: NewsCardData[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/climate/800/500",
     isLive: true,
     headline: "Senate passes landmark climate bill with bipartisan support in late-night session",
     timeAgo: "5H AGO",
@@ -14,7 +14,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/tech/800/500",
     isLive: false,
     headline: "Tech giants report record earnings amid growing AI investment wave",
     timeAgo: "2H AGO",
@@ -25,7 +25,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/cyber/800/500",
     isLive: true,
     headline: "Global cybersecurity breach exposes millions of records across 40 countries",
     timeAgo: "45M AGO",
@@ -36,7 +36,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1574169208507-84376898527d?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/space/800/500",
     isLive: false,
     headline: "Space agency confirms discovery of water signatures on distant exoplanet",
     timeAgo: "8H AGO",
@@ -47,7 +47,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 5,
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/health/800/500",
     isLive: false,
     headline: "World Health Organization declares new pandemic preparedness framework",
     timeAgo: "1D AGO",
