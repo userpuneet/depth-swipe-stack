@@ -25,7 +25,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/cyber/800/500",
     isLive: true,
     headline: "Global cybersecurity breach exposes millions of records across 40 countries",
     timeAgo: "45M AGO",
