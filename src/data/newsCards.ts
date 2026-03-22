@@ -36,7 +36,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1574169208507-84376898527d?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/space/800/500",
     isLive: false,
     headline: "Space agency confirms discovery of water signatures on distant exoplanet",
     timeAgo: "8H AGO",
