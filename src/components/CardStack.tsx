@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import NewsCard, { type NewsCardData } from "./NewsCard";
 
 interface CardStackProps {
@@ -6,7 +6,6 @@ interface CardStackProps {
 }
 
 const SWIPE_THRESHOLD = 60;
-const PEEK_HEIGHT = 64;
 
 const CardStack = ({ cards }: CardStackProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -15,6 +14,16 @@ const CardStack = ({ cards }: CardStackProps) => {
 
   const startY = useRef(0);
   const isDragging = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Prevent iOS page scroll during swipe (must be non-passive)
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const prevent = (e: TouchEvent) => e.preventDefault();
+    el.addEventListener("touchmove", prevent, { passive: false });
+    return () => el.removeEventListener("touchmove", prevent);
+  }, []);
 
   const handleDragStart = useCallback(
     (clientY: number) => {
@@ -96,7 +105,7 @@ const CardStack = ({ cards }: CardStackProps) => {
     if (offset === -1) {
       const pullDown = dragProgress > 0 ? Math.min(dragProgress * 0.5, 120) : 0;
       return {
-        transform: `translateY(calc(-100% + ${PEEK_HEIGHT + pullDown}px)) scale(0.92)`,
+        transform: `translateY(calc(-100% + 20vh + ${pullDown}px)) scale(0.92)`,
         opacity: 0.5 + (pullDown / 120) * 0.5,
         zIndex: 5,
         transition,
@@ -106,7 +115,7 @@ const CardStack = ({ cards }: CardStackProps) => {
     if (offset === 1) {
       const pushUp = dragProgress < 0 ? Math.min(Math.abs(dragProgress) * 0.5, 120) : 0;
       return {
-        transform: `translateY(calc(100% - ${PEEK_HEIGHT + pushUp}px)) scale(0.92)`,
+        transform: `translateY(calc(100% - 20vh - ${pushUp}px)) scale(0.92)`,
         opacity: 0.5 + (pushUp / 120) * 0.5,
         zIndex: 5,
         transition,
@@ -125,7 +134,8 @@ const CardStack = ({ cards }: CardStackProps) => {
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden select-none"
+      ref={containerRef}
+      className="relative h-full w-full overflow-hidden select-none touch-none"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -134,30 +144,24 @@ const CardStack = ({ cards }: CardStackProps) => {
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
     >
-      {/* Card indicator dots */}
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-1.5">
-        {cards.map((_, i) => (
+      {renderRange.map((i) => {
+        const offset = i - currentIndex;
+        const padClass =
+          offset === -1
+            ? "absolute inset-0 px-4 pb-4"   // no top padding — card reaches notch
+            : offset === 1
+            ? "absolute inset-0 px-4 pt-4"   // no bottom padding — card covers bottom edge
+            : "absolute inset-0 p-4";         // current card: unchanged padding
+        return (
           <div
-            key={i}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: 6,
-              height: i === currentIndex ? 18 : 6,
-              backgroundColor: i === currentIndex ? "hsl(0, 0%, 95%)" : "hsl(228, 8%, 35%)",
-            }}
-          />
-        ))}
-      </div>
-
-      {renderRange.map((i) => (
-        <div
-          key={cards[i].id}
-          className="absolute inset-0 p-4"
-          style={getCardStyle(i)}
-        >
-          <NewsCard data={cards[i]} />
-        </div>
-      ))}
+            key={cards[i].id}
+            className={padClass}
+            style={getCardStyle(i)}
+          >
+            <NewsCard data={cards[i]} />
+          </div>
+        );
+      })}
     </div>
   );
 };
