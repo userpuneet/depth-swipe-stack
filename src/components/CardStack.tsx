@@ -13,26 +13,25 @@ const CardStack = ({ cards }: CardStackProps) => {
   const [dragY, setDragY] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const touchStartY = useRef(0);
+  const startY = useRef(0);
   const isDragging = useRef(false);
 
-  const onTouchStart = useCallback(
-    (e: React.TouchEvent) => {
+  const handleDragStart = useCallback(
+    (clientY: number) => {
       if (isTransitioning) return;
-      touchStartY.current = e.touches[0].clientY;
+      startY.current = clientY;
       isDragging.current = true;
       setDragY(0);
     },
     [isTransitioning]
   );
 
-  const onTouchMove = useCallback(
-    (e: React.TouchEvent) => {
+  const handleDragMove = useCallback(
+    (clientY: number) => {
       if (!isDragging.current || isTransitioning) return;
-      const delta = e.touches[0].clientY - touchStartY.current;
-      // Constrain: don't drag down past first or up past last
+      const delta = clientY - startY.current;
       if (delta > 0 && currentIndex === 0) {
-        setDragY(delta * 0.2); // rubber band
+        setDragY(delta * 0.2);
         return;
       }
       if (delta < 0 && currentIndex === cards.length - 1) {
@@ -44,18 +43,16 @@ const CardStack = ({ cards }: CardStackProps) => {
     [isTransitioning, currentIndex, cards.length]
   );
 
-  const onTouchEnd = useCallback(() => {
+  const handleDragEnd = useCallback(() => {
     if (!isDragging.current || isTransitioning) return;
     isDragging.current = false;
 
     if (dragY < -SWIPE_THRESHOLD && currentIndex < cards.length - 1) {
-      // Swipe up → next
       setIsTransitioning(true);
       setDragY(0);
       setCurrentIndex((i) => i + 1);
       setTimeout(() => setIsTransitioning(false), 350);
     } else if (dragY > SWIPE_THRESHOLD && currentIndex > 0) {
-      // Swipe down → prev
       setIsTransitioning(true);
       setDragY(0);
       setCurrentIndex((i) => i - 1);
@@ -64,6 +61,17 @@ const CardStack = ({ cards }: CardStackProps) => {
       setDragY(0);
     }
   }, [dragY, isTransitioning, currentIndex, cards.length]);
+
+  // Touch handlers
+  const onTouchStart = useCallback((e: React.TouchEvent) => handleDragStart(e.touches[0].clientY), [handleDragStart]);
+  const onTouchMove = useCallback((e: React.TouchEvent) => handleDragMove(e.touches[0].clientY), [handleDragMove]);
+  const onTouchEnd = useCallback(() => handleDragEnd(), [handleDragEnd]);
+
+  // Mouse handlers
+  const onMouseDown = useCallback((e: React.MouseEvent) => { e.preventDefault(); handleDragStart(e.clientY); }, [handleDragStart]);
+  const onMouseMove = useCallback((e: React.MouseEvent) => handleDragMove(e.clientY), [handleDragMove]);
+  const onMouseUp = useCallback(() => handleDragEnd(), [handleDragEnd]);
+  const onMouseLeave = useCallback(() => { if (isDragging.current) handleDragEnd(); }, [handleDragEnd]);
 
   const getCardStyle = (index: number): React.CSSProperties => {
     const offset = index - currentIndex;
@@ -75,7 +83,6 @@ const CardStack = ({ cards }: CardStackProps) => {
       : "none";
 
     if (offset === 0) {
-      // Current card
       const progress = Math.min(Math.abs(dragProgress) / 300, 1);
       const scale = 1 - progress * 0.08;
       return {
@@ -87,7 +94,6 @@ const CardStack = ({ cards }: CardStackProps) => {
     }
 
     if (offset === -1) {
-      // Previous card (peeking at top)
       const pullDown = dragProgress > 0 ? Math.min(dragProgress * 0.5, 120) : 0;
       return {
         transform: `translateY(calc(-100% + ${PEEK_HEIGHT + pullDown}px)) scale(0.92)`,
@@ -98,7 +104,6 @@ const CardStack = ({ cards }: CardStackProps) => {
     }
 
     if (offset === 1) {
-      // Next card (peeking at bottom)
       const pushUp = dragProgress < 0 ? Math.min(Math.abs(dragProgress) * 0.5, 120) : 0;
       return {
         transform: `translateY(calc(100% - ${PEEK_HEIGHT + pushUp}px)) scale(0.92)`,
@@ -108,37 +113,26 @@ const CardStack = ({ cards }: CardStackProps) => {
       };
     }
 
-    // Off-screen cards
     if (offset < -1) {
-      return {
-        transform: "translateY(-120%) scale(0.85)",
-        opacity: 0,
-        zIndex: 1,
-        transition,
-        pointerEvents: "none",
-      };
+      return { transform: "translateY(-120%) scale(0.85)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
     }
-
-    return {
-      transform: "translateY(120%) scale(0.85)",
-      opacity: 0,
-      zIndex: 1,
-      transition,
-      pointerEvents: "none",
-    };
+    return { transform: "translateY(120%) scale(0.85)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
   };
 
-  // Only render nearby cards for perf
   const renderRange = [currentIndex - 1, currentIndex, currentIndex + 1].filter(
     (i) => i >= 0 && i < cards.length
   );
 
   return (
     <div
-      className="relative h-full w-full overflow-hidden"
+      className="relative h-full w-full overflow-hidden select-none"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onMouseLeave={onMouseLeave}
     >
       {/* Card indicator dots */}
       <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-1.5">
@@ -149,8 +143,7 @@ const CardStack = ({ cards }: CardStackProps) => {
             style={{
               width: 6,
               height: i === currentIndex ? 18 : 6,
-              backgroundColor:
-                i === currentIndex ? "hsl(0, 0%, 95%)" : "hsl(228, 8%, 35%)",
+              backgroundColor: i === currentIndex ? "hsl(0, 0%, 95%)" : "hsl(228, 8%, 35%)",
             }}
           />
         ))}
