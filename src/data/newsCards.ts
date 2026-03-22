@@ -7,6 +7,7 @@ export const newsCards: NewsCardData[] = [
     isLive: true,
     headline: "Senate passes landmark climate bill with bipartisan support in late-night session",
     timeAgo: "5H AGO",
+    pollQuestion: "Does this signal real progress?",
     options: [
       { label: "Promising development", icon: "check" },
       { label: "Damaging take", icon: "warning" },
@@ -18,6 +19,7 @@ export const newsCards: NewsCardData[] = [
     isLive: false,
     headline: "Tech giants report record earnings amid growing AI investment wave",
     timeAgo: "2H AGO",
+    pollQuestion: "Is AI spending sustainable?",
     options: [
       { label: "Market confidence", icon: "check" },
       { label: "Bubble forming", icon: "warning" },
@@ -29,6 +31,7 @@ export const newsCards: NewsCardData[] = [
     isLive: true,
     headline: "Global cybersecurity breach exposes millions of records across 40 countries",
     timeAgo: "45M AGO",
+    pollQuestion: "Are we prepared for this scale?",
     options: [
       { label: "Wake-up call needed", icon: "check" },
       { label: "Overblown threat", icon: "warning" },
@@ -40,6 +43,7 @@ export const newsCards: NewsCardData[] = [
     isLive: false,
     headline: "Space agency confirms discovery of water signatures on distant exoplanet",
     timeAgo: "8H AGO",
+    pollQuestion: "Could this change the search for life?",
     options: [
       { label: "Breakthrough moment", icon: "check" },
       { label: "Premature claims", icon: "warning" },
@@ -51,6 +55,7 @@ export const newsCards: NewsCardData[] = [
     isLive: false,
     headline: "World Health Organization declares new pandemic preparedness framework",
     timeAgo: "1D AGO",
+    pollQuestion: "Will this framework hold up in practice?",
     options: [
       { label: "Proactive step", icon: "check" },
       { label: "Too restrictive", icon: "warning" },
