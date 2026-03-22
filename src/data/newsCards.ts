@@ -14,7 +14,7 @@ export const newsCards: NewsCardData[] = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop",
+    image: "https://picsum.photos/seed/tech/800/500",
     isLive: false,
     headline: "Tech giants report record earnings amid growing AI investment wave",
     timeAgo: "2H AGO",
