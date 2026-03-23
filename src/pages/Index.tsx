@@ -3,7 +3,10 @@ import { newsCards } from "../data/newsCards";
 
 const Index = () => {
   return (
-    <div className="h-[100dvh] w-full bg-[hsl(228,15%,7%)]">
+    <div
+      className="fixed inset-0 w-full"
+      style={{ background: "hsl(228, 15%, 7%)" }}
+    >
       <CardStack cards={newsCards} />
     </div>
   );
