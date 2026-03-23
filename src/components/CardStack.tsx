@@ -29,7 +29,6 @@ const CardStack = ({ cards }: CardStackProps) => {
     (clientY: number) => {
       if (!isDragging.current || isTransitioning) return;
       const delta = clientY - startY.current;
-      // Rubber-band at edges
       if (delta > 0 && currentIndex === 0) {
         setDragY(delta * 0.2);
         return;
@@ -62,12 +61,10 @@ const CardStack = ({ cards }: CardStackProps) => {
     }
   }, [dragY, isTransitioning, currentIndex, cards.length]);
 
-  // Touch handlers
   const onTouchStart = useCallback((e: React.TouchEvent) => handleDragStart(e.touches[0].clientY), [handleDragStart]);
   const onTouchMove = useCallback((e: React.TouchEvent) => handleDragMove(e.touches[0].clientY), [handleDragMove]);
   const onTouchEnd = useCallback(() => handleDragEnd(), [handleDragEnd]);
 
-  // Mouse handlers
   const onMouseDown = useCallback((e: React.MouseEvent) => { e.preventDefault(); handleDragStart(e.clientY); }, [handleDragStart]);
   const onMouseMove = useCallback((e: React.MouseEvent) => handleDragMove(e.clientY), [handleDragMove]);
   const onMouseUp = useCallback(() => handleDragEnd(), [handleDragEnd]);
@@ -82,7 +79,7 @@ const CardStack = ({ cards }: CardStackProps) => {
       ? "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)"
       : "none";
 
-    // Current card
+    // Current card — centered with equal padding on all sides
     if (offset === 0) {
       return {
         transform: `translateY(${dragProgress}px)`,
@@ -92,25 +89,27 @@ const CardStack = ({ cards }: CardStackProps) => {
       };
     }
 
-    // Previous card — peeking 20% from top, into notch area
+    // Previous card — peeking from top
     if (offset === -1) {
       const pullDown = dragProgress > 0 ? Math.min(dragProgress * 0.6, 150) : 0;
       return {
-        transform: `translateY(calc(-80% + ${pullDown}px)) scale(0.94)`,
-        opacity: 0.6 + (pullDown / 150) * 0.4,
+        transform: `translateY(calc(-82% + ${pullDown}px)) scale(0.94)`,
+        opacity: 0.5 + (pullDown / 150) * 0.5,
         zIndex: 5,
         transition,
+        filter: "blur(2px)",
       };
     }
 
-    // Next card — peeking 20% from bottom, full bleed
+    // Next card — peeking from bottom
     if (offset === 1) {
       const pushUp = dragProgress < 0 ? Math.min(Math.abs(dragProgress) * 0.6, 150) : 0;
       return {
-        transform: `translateY(calc(80% - ${pushUp}px)) scale(0.94)`,
-        opacity: 0.6 + (pushUp / 150) * 0.4,
+        transform: `translateY(calc(82% - ${pushUp}px)) scale(0.94)`,
+        opacity: 0.5 + (pushUp / 150) * 0.5,
         zIndex: 5,
         transition,
+        filter: "blur(2px)",
       };
     }
 
@@ -139,10 +138,12 @@ const CardStack = ({ cards }: CardStackProps) => {
       {renderRange.map((i) => (
         <div
           key={cards[i].id}
-          className="absolute inset-x-0 top-0 bottom-0 p-4"
+          className="absolute inset-0 flex items-center justify-center p-5"
           style={getCardStyle(i)}
         >
-          <NewsCard data={cards[i]} />
+          <div className="w-full h-full max-h-full">
+            <NewsCard data={cards[i]} />
+          </div>
         </div>
       ))}
     </div>
