@@ -138,8 +138,14 @@ const CardStack = ({ cards }: CardStackProps) => {
       {renderRange.map((i) => (
         <div
           key={cards[i].id}
-          className="absolute inset-0 flex items-center justify-center p-5"
-          style={getCardStyle(i)}
+          className="absolute inset-x-0 flex items-center justify-center px-5"
+          style={{
+            top: "env(safe-area-inset-top, 0px)",
+            bottom: "env(safe-area-inset-bottom, 0px)",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+            ...getCardStyle(i),
+          }}
         >
           <div className="w-full h-full max-h-full">
             <NewsCard data={cards[i]} />
