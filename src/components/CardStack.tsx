@@ -6,7 +6,6 @@ interface CardStackProps {
 }
 
 const SWIPE_THRESHOLD = 60;
-const PEEK_HEIGHT = 64;
 
 const CardStack = ({ cards }: CardStackProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,6 +29,7 @@ const CardStack = ({ cards }: CardStackProps) => {
     (clientY: number) => {
       if (!isDragging.current || isTransitioning) return;
       const delta = clientY - startY.current;
+      // Rubber-band at edges
       if (delta > 0 && currentIndex === 0) {
         setDragY(delta * 0.2);
         return;
@@ -82,41 +82,43 @@ const CardStack = ({ cards }: CardStackProps) => {
       ? "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)"
       : "none";
 
+    // Current card
     if (offset === 0) {
-      const progress = Math.min(Math.abs(dragProgress) / 300, 1);
-      const scale = 1 - progress * 0.08;
       return {
-        transform: `translateY(${dragProgress}px) scale(${scale})`,
+        transform: `translateY(${dragProgress}px)`,
         opacity: 1,
         zIndex: 10,
         transition,
       };
     }
 
+    // Previous card — peeking 20% from top, into notch area
     if (offset === -1) {
-      const pullDown = dragProgress > 0 ? Math.min(dragProgress * 0.5, 120) : 0;
+      const pullDown = dragProgress > 0 ? Math.min(dragProgress * 0.6, 150) : 0;
       return {
-        transform: `translateY(calc(-100% + ${PEEK_HEIGHT + pullDown}px)) scale(0.92)`,
-        opacity: 0.5 + (pullDown / 120) * 0.5,
+        transform: `translateY(calc(-80% + ${pullDown}px)) scale(0.94)`,
+        opacity: 0.6 + (pullDown / 150) * 0.4,
         zIndex: 5,
         transition,
       };
     }
 
+    // Next card — peeking 20% from bottom, full bleed
     if (offset === 1) {
-      const pushUp = dragProgress < 0 ? Math.min(Math.abs(dragProgress) * 0.5, 120) : 0;
+      const pushUp = dragProgress < 0 ? Math.min(Math.abs(dragProgress) * 0.6, 150) : 0;
       return {
-        transform: `translateY(calc(100% - ${PEEK_HEIGHT + pushUp}px)) scale(0.92)`,
-        opacity: 0.5 + (pushUp / 120) * 0.5,
+        transform: `translateY(calc(80% - ${pushUp}px)) scale(0.94)`,
+        opacity: 0.6 + (pushUp / 150) * 0.4,
         zIndex: 5,
         transition,
       };
     }
 
+    // Off-screen cards
     if (offset < -1) {
-      return { transform: "translateY(-120%) scale(0.85)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
+      return { transform: "translateY(-120%) scale(0.88)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
     }
-    return { transform: "translateY(120%) scale(0.85)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
+    return { transform: "translateY(120%) scale(0.88)", opacity: 0, zIndex: 1, transition, pointerEvents: "none" };
   };
 
   const renderRange = [currentIndex - 1, currentIndex, currentIndex + 1].filter(
@@ -134,25 +136,10 @@ const CardStack = ({ cards }: CardStackProps) => {
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseLeave}
     >
-      {/* Card indicator dots */}
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-1.5">
-        {cards.map((_, i) => (
-          <div
-            key={i}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: 6,
-              height: i === currentIndex ? 18 : 6,
-              backgroundColor: i === currentIndex ? "hsl(0, 0%, 95%)" : "hsl(228, 8%, 35%)",
-            }}
-          />
-        ))}
-      </div>
-
       {renderRange.map((i) => (
         <div
           key={cards[i].id}
-          className="absolute inset-0 p-4"
+          className="absolute inset-x-0 top-0 bottom-0 p-4"
           style={getCardStyle(i)}
         >
           <NewsCard data={cards[i]} />

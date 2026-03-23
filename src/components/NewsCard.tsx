@@ -6,6 +6,7 @@ export interface NewsCardData {
   isLive: boolean;
   headline: string;
   timeAgo: string;
+  pollQuestion: string;
   options: { label: string; icon: "check" | "warning" }[];
 }
 
@@ -20,7 +21,15 @@ const iconMap = {
 
 const NewsCard = ({ data }: NewsCardProps) => {
   return (
-    <div className="flex h-full w-full flex-col rounded-3xl bg-[hsl(228,12%,12%)] border border-[hsl(228,10%,18%)] overflow-hidden shadow-[0_8px_32px_hsl(0,0%,0%/0.4)]">
+    <div className="flex h-full w-full flex-col rounded-3xl overflow-hidden"
+      style={{
+        background: "hsla(228, 12%, 14%, 0.55)",
+        backdropFilter: "blur(40px) saturate(1.6)",
+        WebkitBackdropFilter: "blur(40px) saturate(1.6)",
+        border: "1px solid hsla(0, 0%, 100%, 0.12)",
+        boxShadow: "0 8px 32px hsla(0, 0%, 0%, 0.35), inset 0 0.5px 0 hsla(0, 0%, 100%, 0.15)",
+      }}
+    >
       {/* Image area */}
       <div className="relative flex-shrink-0">
         <img
@@ -38,7 +47,7 @@ const NewsCard = ({ data }: NewsCardProps) => {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col justify-between p-5 gap-4">
+      <div className="flex flex-1 flex-col justify-between p-5 gap-3">
         <div className="space-y-2">
           <h2
             className="text-[hsl(0,0%,95%)] font-semibold leading-snug"
@@ -51,17 +60,26 @@ const NewsCard = ({ data }: NewsCardProps) => {
           </p>
         </div>
 
-        {/* Poll options */}
-        <div className="flex flex-col gap-2.5">
+        {/* Poll question */}
+        <p className="text-sm font-medium text-[hsl(0,0%,75%)]">
+          {data.pollQuestion}
+        </p>
+
+        {/* Poll options — side by side */}
+        <div className="flex gap-2.5">
           {data.options.map((opt, i) => {
             const Icon = iconMap[opt.icon];
             return (
               <button
                 key={i}
-                className="flex w-full items-center justify-between rounded-2xl border border-[hsl(228,10%,22%)] bg-[hsl(228,12%,15%)] px-4 py-3.5 text-sm font-medium text-[hsl(0,0%,85%)] transition-all duration-150 hover:bg-[hsl(228,12%,18%)] hover:border-[hsl(228,10%,28%)] active:scale-[0.97]"
+                className="flex flex-1 items-center justify-between rounded-2xl px-4 py-3.5 text-sm font-medium text-[hsl(0,0%,85%)] transition-all duration-150 active:scale-[0.97]"
+                style={{
+                  background: "hsla(228, 12%, 18%, 0.6)",
+                  border: "1px solid hsla(0, 0%, 100%, 0.08)",
+                }}
               >
-                <span>{opt.label}</span>
-                <Icon size={16} className="text-[hsl(228,8%,50%)]" />
+                <span className="truncate mr-2">{opt.label}</span>
+                <Icon size={16} className="flex-shrink-0 text-[hsl(228,8%,50%)]" />
               </button>
             );
           })}
