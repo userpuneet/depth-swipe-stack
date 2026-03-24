@@ -4,14 +4,10 @@ import { newsCards } from "../data/newsCards";
 const Index = () => {
   return (
     <div
-      className="fixed w-full"
+      className="fixed inset-0 w-full"
       style={{
         background: "hsl(0, 0%, 0%)",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: "100%",
+        height: "100dvh",
       }}
     >
       <CardStack cards={newsCards} />
