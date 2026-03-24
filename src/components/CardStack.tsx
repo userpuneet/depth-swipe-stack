@@ -140,8 +140,8 @@ const CardStack = ({ cards }: CardStackProps) => {
           key={cards[i].id}
           className="absolute inset-0 flex items-center justify-center px-5"
           style={{
-            paddingTop: "27px",
-            paddingBottom: "27px",
+            paddingTop: "46px",
+            paddingBottom: "46px",
             ...getCardStyle(i),
           }}
         >
