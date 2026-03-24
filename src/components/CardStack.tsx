@@ -142,8 +142,8 @@ const CardStack = ({ cards }: CardStackProps) => {
           style={{
             top: "env(safe-area-inset-top, 0px)",
             bottom: "0px",
-            paddingTop: "8px",
-            paddingBottom: "8px",
+            paddingTop: "27px",
+            paddingBottom: "27px",
             ...getCardStyle(i),
           }}
         >
