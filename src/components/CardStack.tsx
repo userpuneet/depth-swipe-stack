@@ -138,10 +138,8 @@ const CardStack = ({ cards }: CardStackProps) => {
       {renderRange.map((i) => (
         <div
           key={cards[i].id}
-          className="absolute inset-x-0 flex items-center justify-center px-5"
+          className="absolute inset-0 flex items-center justify-center px-5"
           style={{
-            top: "env(safe-area-inset-top, 0px)",
-            bottom: "0px",
             paddingTop: "27px",
             paddingBottom: "27px",
             ...getCardStyle(i),
