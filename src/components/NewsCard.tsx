@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { Check, AlertTriangle, Radio } from "lucide-react";
 
 export interface NewsCardData {
@@ -20,29 +21,53 @@ const iconMap = {
 };
 
 const NewsCard = ({ data }: NewsCardProps) => {
+  const [accentColor, setAccentColor] = useState("hsla(0,0%,30%,0.5)");
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = data.image;
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 8;
+        canvas.height = 8;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, 8, 8);
+        const pixel = ctx.getImageData(2, 2, 1, 1).data;
+        setAccentColor(`rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, 0.35)`);
+      } catch {
+        // CORS or other error, keep default
+      }
+    };
+  }, [data.image]);
+
   return (
-    <div
-      className="flex h-full w-full flex-col rounded-3xl overflow-hidden"
-      style={{
-        background: "hsla(0, 0%, 100%, 0.08)",
-        backdropFilter: "blur(60px) saturate(1.8)",
-        WebkitBackdropFilter: "blur(60px) saturate(1.8)",
-        border: "1px solid hsla(0, 0%, 100%, 0.18)",
-        boxShadow:
-          "0 8px 32px hsla(0, 0%, 0%, 0.4), inset 0 1px 0 hsla(0, 0%, 100%, 0.2), inset 0 -1px 0 hsla(0, 0%, 100%, 0.05)",
-      }}
-    >
+    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl">
+      {/* Accent blur background */}
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background: `radial-gradient(ellipse at 50% 30%, ${accentColor} 0%, transparent 70%)`,
+          filter: "blur(40px)",
+        }}
+      />
+
       {/* Image area */}
       <div className="relative flex-shrink-0">
         <img
+          ref={imgRef}
           src={data.image}
           alt={data.headline}
-          className="w-full aspect-[16/10] object-cover"
+          className="w-full aspect-[16/10] object-cover rounded-2xl"
           loading="lazy"
+          crossOrigin="anonymous"
         />
         {/* Gradient overlay for text legibility */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 rounded-2xl"
           style={{
             background:
               "linear-gradient(to bottom, hsla(0,0%,0%,0) 40%, hsla(0,0%,0%,0.55) 100%)",
@@ -118,7 +143,7 @@ const NewsCard = ({ data }: NewsCardProps) => {
                   style={{
                     color: "hsl(0, 0%, 82%)",
                     background: "hsla(0, 0%, 100%, 0.05)",
-                    border: "1px solid hsla(0, 0%, 100%, 0.08)",
+                    border: "1px solid hsla(0, 0%, 100%, 0.06)",
                   }}
                 >
                   <span className="truncate mr-2">{opt.label}</span>
