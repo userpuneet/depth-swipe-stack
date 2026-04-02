@@ -21,7 +21,7 @@ const iconMap = {
 };
 
 const NewsCard = ({ data }: NewsCardProps) => {
-  const [accentColor, setAccentColor] = useState("hsla(0,0%,30%,0.5)");
+  const [accentColor, setAccentColor] = useState("rgba(80,80,80,0.3)");
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -37,48 +37,44 @@ const NewsCard = ({ data }: NewsCardProps) => {
         if (!ctx) return;
         ctx.drawImage(img, 0, 0, 8, 8);
         const pixel = ctx.getImageData(2, 2, 1, 1).data;
-        setAccentColor(`rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, 0.35)`);
+        setAccentColor(`rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, 0.45)`);
       } catch {
-        // CORS or other error, keep default
+        // CORS or other error
       }
     };
   }, [data.image]);
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-3xl">
-      {/* Accent blur background */}
+    <div className="relative flex h-full w-full flex-col overflow-visible">
+      {/* Large accent glow — bleeds beyond bounds for blended feel */}
       <div
-        className="absolute inset-0 -z-10"
+        className="absolute -inset-20 -z-10"
         style={{
-          background: `radial-gradient(ellipse at 50% 30%, ${accentColor} 0%, transparent 70%)`,
-          filter: "blur(40px)",
+          background: `radial-gradient(ellipse at 50% 35%, ${accentColor} 0%, transparent 65%)`,
+          filter: "blur(60px)",
         }}
       />
 
-      {/* Image area */}
+      {/* Image — no rounded corners, bleeds edge to edge */}
       <div className="relative flex-shrink-0">
         <img
           ref={imgRef}
           src={data.image}
           alt={data.headline}
-          className="w-full aspect-[16/10] object-cover rounded-2xl"
+          className="w-full aspect-[16/10] object-cover"
           loading="lazy"
           crossOrigin="anonymous"
-        />
-        {/* Gradient overlay for text legibility */}
-        <div
-          className="absolute inset-0 rounded-2xl"
           style={{
-            background:
-              "linear-gradient(to bottom, hsla(0,0%,0%,0) 40%, hsla(0,0%,0%,0.55) 100%)",
+            maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
           }}
         />
         {data.isLive && (
           <div
             className="absolute top-3.5 left-3.5 flex items-center gap-1.5 rounded-full px-2.5 py-0.5"
             style={{
-              background: "hsl(142, 70%, 45%)",
-              boxShadow: "0 2px 8px hsla(142, 70%, 45%, 0.4)",
+              background: "hsla(142, 70%, 45%, 0.8)",
+              boxShadow: "0 0 20px hsla(142, 70%, 45%, 0.5)",
             }}
           >
             <Radio size={10} className="text-white animate-pulse" />
@@ -92,16 +88,15 @@ const NewsCard = ({ data }: NewsCardProps) => {
         )}
       </div>
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col justify-between px-4 pt-4 pb-4 gap-2.5">
-        {/* Meta + Headline */}
+      {/* Content — floats openly, no container feel */}
+      <div className="flex flex-1 flex-col justify-between px-1 pt-2 pb-2 gap-2">
         <div className="space-y-1.5">
           <p
             className="font-semibold uppercase"
             style={{
               fontSize: "10px",
               letterSpacing: "0.12em",
-              color: "hsl(228, 8%, 46%)",
+              color: "hsla(228, 8%, 50%, 0.7)",
             }}
           >
             {data.timeAgo}
@@ -111,7 +106,7 @@ const NewsCard = ({ data }: NewsCardProps) => {
             style={{
               fontSize: "clamp(0.9rem, 4vw, 1.1rem)",
               lineHeight: 1.35,
-              color: "hsl(0, 0%, 93%)",
+              color: "hsla(0, 0%, 93%, 0.95)",
               textWrap: "balance",
             }}
           >
@@ -119,38 +114,37 @@ const NewsCard = ({ data }: NewsCardProps) => {
           </h2>
         </div>
 
-        {/* Poll section */}
+        {/* Poll section — borderless, ghost buttons */}
         <div className="flex flex-col gap-2 mt-auto">
           <p
             className="font-medium"
             style={{
               fontSize: "12px",
-              color: "hsl(0, 0%, 55%)",
+              color: "hsla(0, 0%, 55%, 0.7)",
               letterSpacing: "0.01em",
             }}
           >
             {data.pollQuestion}
           </p>
 
-          {/* Poll options */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             {data.options.map((opt, i) => {
               const Icon = iconMap[opt.icon];
               return (
                 <button
                   key={i}
-                  className="flex items-center justify-between rounded-xl px-3.5 py-3 text-[13px] font-medium transition-all duration-150 active:scale-[0.97]"
+                  className="flex items-center justify-between rounded-2xl px-3.5 py-2.5 text-[13px] font-medium transition-all duration-150 active:scale-[0.97]"
                   style={{
-                    color: "hsl(0, 0%, 82%)",
-                    background: "hsla(0, 0%, 100%, 0.05)",
-                    border: "1px solid hsla(0, 0%, 100%, 0.06)",
+                    color: "hsla(0, 0%, 80%, 0.85)",
+                    background: "hsla(0, 0%, 100%, 0.03)",
+                    border: "none",
                   }}
                 >
                   <span className="truncate mr-2">{opt.label}</span>
                   <Icon
                     size={14}
                     className="flex-shrink-0"
-                    style={{ color: "hsl(228, 8%, 42%)" }}
+                    style={{ color: "hsla(228, 8%, 42%, 0.6)" }}
                   />
                 </button>
               );
